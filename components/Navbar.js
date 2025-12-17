@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import Action_Button from "./Action_Button";
 import Link from "next/link";
 
@@ -6,7 +7,7 @@ const NavbarList = [
   { title: "Home", href: "#herosection" },
   { title: "About", href: "#about" },
   { title: "Services", href: "#services" },
-  { title: "Departments", href: "#departments" },
+  { title: "Departments", href: "/departments" },
   { title: "Appointment", href: "#appointment" },
   { title: "Doctors", href: "#doctors" },
   { title: "Contact", href: "#contact" },
@@ -20,76 +21,80 @@ const TopbarIcons = [
 ];
 
 const Navbar = () => {
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   return (
     <>
-      {/* TopBar Section 👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇 */}
-
-      <div className="flex flex-col sm:flex-row justify-between items-center w-full py-1 px-2 sm:px-10 lg:px-20 bg-light-50 dark:bg-black text-gray-800 dark:text-white">
-        <div className="flex gap-4 items-center">
-          <InfoContainer
-            logo='<i class="fa-regular fa-envelope"></i>'
-            info="admin@gmail.com"
-          />
-          <InfoContainer
-            logo='<i class="fa-solid fa-mobile-screen-button"></i>'
-            info="+92 545 2356133"
-          />
-        </div>
-        <div className="flex justify-center items-center gap-3">
-          {TopbarIcons.map((item, index) => (
-            <TopbarLogo logo={item.icon} href={item.href} key={index} />
-          ))}
-          {/* <TopbarLogo logo="@" href="/" /> */}
-        </div>
-      </div>
-
-      {/* Navbar Section 👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇 */}
-
+      {/* Navbar Section */}
       <div className="flex h-[9vh] items-center justify-between px-2 sm:px-10 lg:px-20 bg-light-50 shadow-md">
         <span className="drop-shadow-md text-gray-500 font-extrabold text-4xl">
           Medi<span className="text-blue-600">.care</span>
         </span>
         <div className="flex items-center justify-end gap-5 py-2">
+          {/* Desktop nav */}
           <ul className="list-none hidden lg:flex justify-between items-center gap-3">
             {NavbarList.map((item, index) => (
               <NavItem href={item.href} title={item.title} key={index} />
             ))}
-
-            {/* <NavItem text="Home" path="/" /> */}
           </ul>
-          <Action_Button text="Make an Appointment" href="#appointment" />
+          {/* Desktop CTA */}
+          <div className="hidden lg:block">
+            <Action_Button text="Make an Appointment" href="#appointment" />
+          </div>
+          {/* Mobile hamburger */}
           <button
-            popovertarget="res_Navbar"
-            popovertargetaction="open"
-            className="inline-block sm:hidden cursor-pointer text-2xl px-2"
+            type="button"
+            aria-label="
+            Open menu"
+            aria-controls="mobile-menu"
+            aria-expanded={mobileOpen}
+            onClick={() => setMobileOpen((v) => !v)}
+            className="inline-flex items-center justify-center lg:hidden cursor-pointer text-3xl px-2 text-gray-700"
           >
-            #
+            {/* Simple hamburger/close icon using text to avoid extra deps */}
+            <span>{mobileOpen ? "✕" : "☰"}</span>
           </button>
         </div>
       </div>
 
-      {/* Navbar Responsiveness */}
-
-      {/* <div
-        popover
-        className="flex justify-start px-20 items-center shadow-lg absolute top-0 right-0 bg-white w-1/2 h-screen z-10"
-        id="res_Navbar"
+      {/* Mobile Menu (slide-over) */}
+      <div
+        id="mobile-menu"
+        aria-hidden={!mobileOpen}
+        className={`${mobileOpen ? "translate-x-0" : "translate-x-full"} fixed inset-y-0 right-0 z-50 w-3/4 max-w-xs bg-white shadow-xl border-l border-gray-100 transition-transform duration-300 ease-out lg:hidden`}
       >
-        <button className="bg-rose-600 text-white text-xl shadow-md absolute top-3 right-5 px-2 py-1 ">
-          X
-        </button>
-        <ul className="flex flex-col">
-          {NavbarList.map((item, index) => (
-            <Link
-              key={index}
-              href={item.href}
-              className="py-2 px-1 text-2xl hover:text-blue-400 hover:text-3xl "
-            >
-              {item.title}
-            </Link>
-          ))}
-        </ul>
-      </div> */}
+        <div className="flex items-center justify-between px-5 py-4 border-b">
+          <span className="text-2xl font-extrabold text-gray-500">
+            Medi<span className="text-blue-600">.care</span>
+          </span>
+          <button
+            type="button"
+            aria-label="Close menu"
+            onClick={() => setMobileOpen(false)}
+            className="text-2xl p-1"
+          >
+            ✕
+          </button>
+        </div>
+        <nav className="px-5 py-4">
+          <ul className="flex flex-col gap-3">
+            {NavbarList.map((item, index) => (
+              <li key={index}>
+                <Link
+                  href={item.href}
+                  onClick={() => setMobileOpen(false)}
+                  className="block py-2 text-lg text-gray-700 hover:text-blue-500"
+                >
+                  {item.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-6">
+            <Action_Button text="Make an Appointment" href="#appointment" />
+          </div>
+        </nav>
+      </div>
     </>
   );
 };
