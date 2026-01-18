@@ -7,3 +7,6 @@
 * {
     font-family: 'Raleway', sans-serif;
 }
+.filter-btn {
+  @apply border px-4 py-2 rounded-md text-sm bg-white hover:bg-gray-100;
+}

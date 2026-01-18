@@ -1,53 +1,100 @@
 import Link from "next/link";
 
-const Footer = () => {
-  const footerIcons = [
-    { icon: `<i class="fa-brands fa-twitter"></i>`, href: "" },
-    { icon: `<i class="fa-brands fa-facebook"></i>`, href: "" },
-    { icon: `<i class="fa-brands fa-instagram"></i>`, href: "" },
-    { icon: `<i class="fa-brands fa-skype"></i>`, href: "" },
-    { icon: `<i class="fa-brands fa-linkedin"></i>`, href: "" },
-  ];
+export default function Footer() {
   return (
-    <>
-      <div className="flex flex-col sm:flex-row gap-3 sm:gap-1 justify-between items-center bg-sky-50/60 shadow-[inset_0_1px_2px_2px_#e2e1e1] text-sm px-2 sm:px-10 lg:px-20 py-8">
+    <footer className="bg-white border-t mt-20">
+      <div className="px-4 sm:px-10 lg:px-20 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        
+        {/* Brand */}
         <div>
-          <p>
-            &copy; Copyright <span className="font-bold">.$chetan</span> All
-            Rights Reserved
-          </p>
-          <p className="sm:text-start text-center">
-            Developed by{" "}
-            <Link
-              className="font-semibold text-blue-400 hover:underline underline-offset-2"
-              href="https://github.com/chetanthakur0507"
-              target="_blank"
-            >
-              ChetanThakur
-            </Link>
-            .
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center text-white font-bold">
+              H
+            </div>
+            <span className="text-lg font-semibold">HealthSync</span>
+          </div>
+
+          <p className="text-sm text-gray-600 leading-relaxed">
+            Empowering patients with seamless access to world-class
+            healthcare specialists.
           </p>
         </div>
-        <div className="flex justify-between items-center gap-3">
-          {footerIcons.map((item, index) => (
-            <FooterIcon key={index} icon={item.icon} href={item.href} />
-          ))}
+
+        {/* Quick Links */}
+        <div>
+          <h4 className="font-semibold mb-4">Quick Links</h4>
+          <ul className="space-y-2 text-sm text-gray-600">
+            <li>
+              <Link href="/doctors" className="hover:text-blue-600">
+                Find a Doctor
+              </Link>
+            </li>
+            <li>
+              <Link href="/departments" className="hover:text-blue-600">
+                Departments
+              </Link>
+            </li>
+            <li>
+              <Link href="/blogs" className="hover:text-blue-600">
+                Medical Blogs
+              </Link>
+            </li>
+            <li>
+              <Link href="/faqs" className="hover:text-blue-600">
+                FAQs
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        {/* Support */}
+        <div>
+          <h4 className="font-semibold mb-4">Support</h4>
+          <ul className="space-y-2 text-sm text-gray-600">
+            <li>
+              <Link href="/help" className="hover:text-blue-600">
+                Help Center
+              </Link>
+            </li>
+            <li>
+              <Link href="/privacy" className="hover:text-blue-600">
+                Privacy Policy
+              </Link>
+            </li>
+            <li>
+              <Link href="/terms" className="hover:text-blue-600">
+                Terms of Service
+              </Link>
+            </li>
+            <li>
+              <Link href="/contact" className="hover:text-blue-600">
+                Contact
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        {/* Contact Info */}
+        <div>
+          <h4 className="font-semibold mb-4">Contact Info</h4>
+          <ul className="space-y-3 text-sm text-gray-600">
+            <li className="flex gap-2">
+              📧 support@healthsync.com
+            </li>
+            <li className="flex gap-2">
+              📞 +1 (555) 000-1234
+            </li>
+            <li className="flex gap-2">
+              📍 123 Healthcare Way, Medical District
+            </li>
+          </ul>
         </div>
       </div>
-    </>
-  );
-};
 
-const FooterIcon = (props) => {
-  return (
-    <>
-      <Link
-        className="rounded-full bg-blue-500 px-3 py-2 text-white"
-        href={props.href}
-        dangerouslySetInnerHTML={{ __html: props.icon }}
-      ></Link>
-    </>
+      {/* Bottom Bar */}
+      <div className="border-t text-center text-sm text-gray-500 py-4">
+        © 2024 HealthSync Medical Group. All rights reserved.
+      </div>
+    </footer>
   );
-};
-
-export default Footer;
+}

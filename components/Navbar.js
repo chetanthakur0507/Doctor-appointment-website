@@ -9,7 +9,7 @@ const NavbarList = [
   { title: "Services", href: "#services" },
   { title: "Departments", href: "/departments" },
   { title: "Appointment", href: "#appointment" },
-  { title: "Doctors", href: "#doctors" },
+  { title: "Doctors", href: "/Doctors" },
   { title: "Contact", href: "#contact" },
 ];
 
