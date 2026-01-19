@@ -68,13 +68,6 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleLogout = async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    router.push("/admin/login");
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -98,12 +91,6 @@ export default function AdminDashboard() {
             >
               View Site
             </Link>
-            <button
-              onClick={handleLogout}
-              className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
-            >
-              Logout
-            </button>
           </div>
         </div>
 

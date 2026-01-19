@@ -1,66 +1,68 @@
-import DepartmentCard from "@/components/DepartmentCard";
+"use client";
 
-export const metadata = {
-  title: "Departments | HealthSync",
-};
+import { useEffect, useState } from "react";
+import DepartmentCard from "@/components/DepartmentCard";
+import Link from "next/link";
 
 export default function DepartmentsPage() {
-  const departments = [
-    {
-      title: "Cardiology",
-      desc: "Heart health, hypertension, and cardiovascular care.",
-      image: "/images/cardiology.jpg",
-      slug: "cardiology",
-    },
-    {
-      title: "Neurology",
-      desc: "Brain, spinal cord, and complex nerve disorders.",
-      image: "/images/neurology.jpg",
-      slug: "neurology",
-    },
-    {
-      title: "Pediatrics",
-      desc: "Specialized healthcare for infants and children.",
-      image: "/images/pediatrics.jpg",
-      slug: "pediatrics",
-    },
-    {
-      title: "Orthopedics",
-      desc: "Bone, joint, and musculoskeletal treatments.",
-      image: "/images/orthopedics.jpg",
-      slug: "orthopedics",
-    },
-    {
-      title: "Dermatology",
-      desc: "Comprehensive skin, hair, and nail care.",
-      image: "/images/dermatology.jpg",
-      slug: "dermatology",
-    },
-    {
-      title: "Gastroenterology",
-      desc: "Digestive system and liver treatments.",
-      image: "/images/gastro.jpg",
-      slug: "gastroenterology",
-    },
-    {
-      title: "Ophthalmology",
-      desc: "Vision care, corrective treatments, and eye surgery.",
-      image: "/images/eye.jpg",
-      slug: "ophthalmology",
-    },
-    {
-      title: "Oncology",
-      desc: "Cancer diagnosis and advanced treatments.",
-      image: "/images/oncology.jpg",
-      slug: "oncology",
-    },
-  ];
+  const [departments, setDepartments] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchDepartments();
+  }, []);
+
+  const fetchDepartments = async () => {
+    try {
+      const res = await fetch("/api/doctors");
+      const doctors = await res.json();
+
+      // Get unique departments with doctor count
+      const deptMap = {};
+      doctors.forEach((doc) => {
+        const dept = doc.department;
+        if (!deptMap[dept]) {
+          deptMap[dept] = {
+            name: dept,
+            count: 0,
+            specialization: doc.specialization,
+          };
+        }
+        deptMap[dept].count++;
+      });
+
+      // Convert to array
+      const deptArray = Object.keys(deptMap).map((key) => ({
+        title: key,
+        desc: `Specialized ${deptMap[key].specialization || key} care with ${deptMap[key].count} expert doctor${deptMap[key].count > 1 ? 's' : ''}.`,
+        slug: key.toLowerCase(),
+        count: deptMap[key].count,
+      }));
+
+      setDepartments(deptArray);
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading departments...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <main className="bg-gray-50 min-h-screen px-4 sm:px-10 lg:px-20 py-10">
       {/* Breadcrumb */}
       <p className="text-sm text-gray-500 mb-4">
-        Home / <span className="text-gray-800">Medical Departments</span>
+        <Link href="/" className="hover:text-blue-600">Home</Link> / <span className="text-gray-800">Medical Departments</span>
       </p>
 
       {/* Header */}
@@ -68,32 +70,26 @@ export default function DepartmentsPage() {
         <div>
           <h1 className="text-3xl font-bold">Our Specialties</h1>
           <p className="text-gray-600 mt-2 max-w-xl">
-            Explore our comprehensive healthcare services. From specialized
-            surgeries to routine pediatric care.
+            Explore our comprehensive healthcare services with {departments.length} specialized departments.
           </p>
         </div>
 
-        <button className="border border-red-200 text-red-600 px-4 py-2 rounded-md text-sm">
-          🚨 Emergency Care
-        </button>
-      </div>
-
-      {/* Filters */}
-      <div className="flex flex-wrap gap-3 mb-10">
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm">
-          All Specialties
-        </button>
-        <button className="filter-btn">Surgical</button>
-        <button className="filter-btn">Diagnostic</button>
-        <button className="filter-btn">General Medicine</button>
-        <button className="filter-btn">Pediatrics</button>
+        <Link href="/user/appointments/book" className="border border-red-200 bg-red-50 text-red-600 px-4 py-2 rounded-md text-sm hover:bg-red-100 transition">
+          🚨 Book Emergency Care
+        </Link>
       </div>
 
       {/* Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {departments.map((dept) => (
-          <DepartmentCard key={dept.slug} dept={dept} />
-        ))}
+        {departments.length > 0 ? (
+          departments.map((dept) => (
+            <DepartmentCard key={dept.slug} dept={dept} />
+          ))
+        ) : (
+          <div className="col-span-full text-center py-12 text-gray-500">
+            No departments available
+          </div>
+        )}
       </div>
 
       {/* CTA */}
@@ -108,12 +104,12 @@ export default function DepartmentsPage() {
         </div>
 
         <div className="flex gap-4">
-          <button className="bg-white text-blue-600 px-5 py-2 rounded-md">
-            Contact Us
-          </button>
-          <button className="border border-white px-5 py-2 rounded-md">
-            Learn More
-          </button>
+          <Link href="/Doctors" className="bg-white text-blue-600 px-5 py-2 rounded-md hover:bg-gray-100 transition">
+            View All Doctors
+          </Link>
+          <Link href="/user/appointments/book" className="border border-white px-5 py-2 rounded-md hover:bg-blue-700 transition">
+            Book Appointment
+          </Link>
         </div>
       </div>
     </main>
