@@ -15,10 +15,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`scroll-smooth ${inter.className}`}>
-        <Navbar />
+        <Navbar/>
         {children}
         <Footer/>
-        </body>
+      </body>
     </html>
   );
 }

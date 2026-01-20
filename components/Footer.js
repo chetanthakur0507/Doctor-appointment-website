@@ -9,9 +9,9 @@ export default function Footer() {
         <div>
           <div className="flex items-center gap-2 mb-4">
             <div className="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center text-white font-bold">
-              H
+              M
             </div>
-            <span className="text-lg font-semibold">HealthSync</span>
+            <span className="text-lg font-semibold">Medi.care</span>
           </div>
 
           <p className="text-sm text-gray-600 leading-relaxed">

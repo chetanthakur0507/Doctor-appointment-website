@@ -63,10 +63,10 @@ const Navbar = () => {
                   👤 {user.name || user.email}
                 </span>
                 <Link 
-                  href="/user/dashboard"
+                  href={user.role === "admin" ? "/admin/dashboard" : "/user/dashboard"}
                   className="text-blue-600 hover:text-blue-700 text-sm font-semibold px-3 py-2 rounded-md hover:bg-blue-50 transition"
                 >
-                  Dashboard
+                  {user.role === "admin" ? "Admin Dashboard" : "Dashboard"}
                 </Link>
                 <button
                   onClick={handleLogout}
@@ -133,11 +133,11 @@ const Navbar = () => {
                   👤 {user.name || user.email}
                 </div>
                 <Link 
-                  href="/user/dashboard"
+                  href={user.role === "admin" ? "/admin/dashboard" : "/user/dashboard"}
                   onClick={() => setMobileOpen(false)}
                   className="block text-center text-blue-600 hover:text-blue-700 text-sm font-semibold px-3 py-2 rounded-md hover:bg-blue-50 transition border border-blue-600"
                 >
-                  Dashboard
+                  {user.role === "admin" ? "Admin Dashboard" : "Dashboard"}
                 </Link>
                 <button
                   onClick={handleLogout}
