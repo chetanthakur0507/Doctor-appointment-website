@@ -18,6 +18,23 @@ export default function BookAppointment() {
   const [success, setSuccess] = useState("");
   const router = useRouter();
 
+  // Department color mappings
+  const departmentColors = {
+    "cardiology": { color: "from-red-500 to-pink-500", icon: "🫀" },
+    "neurology": { color: "from-purple-500 to-indigo-500", icon: "🧠" },
+    "orthopedics": { color: "from-blue-500 to-cyan-500", icon: "🦴" },
+    "dermatology": { color: "from-yellow-500 to-orange-500", icon: "💆" },
+    "gastroenterology": { color: "from-green-500 to-emerald-500", icon: "🍽️" },
+    "pediatrics": { color: "from-pink-500 to-rose-500", icon: "👶" },
+    "oncology": { color: "from-indigo-500 to-purple-500", icon: "💊" },
+    "pulmonology": { color: "from-cyan-500 to-blue-500", icon: "🫁" },
+  };
+
+  const getColorForDept = (deptName) => {
+    const key = deptName.toLowerCase().replace(/\s+/g, "");
+    return departmentColors[key] || { color: "from-blue-500 to-cyan-500", icon: "👨‍⚕️" };
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -79,7 +96,7 @@ export default function BookAppointment() {
         return;
       }
 
-      setSuccess("Appointment booked successfully!");
+      setSuccess("Appointment booked successfully! Redirecting...");
       setTimeout(() => {
         router.push("/user/dashboard");
       }, 2000);
@@ -93,135 +110,208 @@ export default function BookAppointment() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50 to-white">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200 border-t-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 font-semibold">Loading doctors...</p>
+        </div>
       </div>
     );
   }
 
   const selectedDoctor = doctors.find((d) => d._id === formData.doctorId);
+  const deptColor = selectedDoctor ? getColorForDept(selectedDoctor.department) : null;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
-      <div className="max-w-2xl mx-auto">
-        <Link href="/user/dashboard" className="text-blue-600 hover:underline mb-8 inline-block">
-          ← Back to Dashboard
-        </Link>
+    <div className="bg-gradient-to-b from-blue-50 to-white min-h-screen">
+      {/* Header Section */}
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-16 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 right-10 w-40 h-40 bg-white rounded-full blur-3xl"></div>
+          <div className="absolute bottom-10 left-10 w-40 h-40 bg-white rounded-full blur-3xl"></div>
+        </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">
-            Book an Appointment
-          </h1>
+        <div className="relative z-10 px-4 sm:px-10 lg:px-20">
+          <div className="animate-fade-in-up">
+            <h1 className="text-4xl sm:text-5xl font-bold mb-4">Book an Appointment</h1>
+            <p className="text-lg text-blue-100">Schedule a consultation with our expert doctors</p>
+          </div>
+        </div>
+      </div>
 
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
-              {error}
-            </div>
-          )}
+      {/* Form Section */}
+      <div className="px-4 sm:px-10 lg:px-20 py-12">
+        <div className="max-w-2xl mx-auto">
+          {/* Back Button */}
+          <Link 
+            href="/user/dashboard" 
+            className="inline-block text-blue-600 hover:text-blue-700 font-semibold mb-8 flex items-center gap-2 transition"
+          >
+            ← Back to Dashboard
+          </Link>
 
-          {success && (
-            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6">
-              {success}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Select Doctor *
-              </label>
-              <select
-                name="doctorId"
-                value={formData.doctorId}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              >
-                <option value="">Choose a doctor</option>
-                {doctors.map((doctor) => (
-                  <option key={doctor._id} value={doctor._id}>
-                    Dr. {doctor.name} - {doctor.department} (₹{doctor.fees})
-                  </option>
-                ))}
-              </select>
+          {/* Form Card */}
+          <div className="bg-white rounded-xl shadow-lg overflow-hidden animate-fade-in-up">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-purple-500 to-indigo-500  px-8 py-8">
+              <h2 className="text-2xl font-bold text-white">Schedule Your Consultation</h2>
+              <p className="text-blue-100 mt-2">Fill in the details below to book your appointment</p>
             </div>
 
-            {selectedDoctor && (
-              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                <h3 className="font-semibold text-gray-900 mb-2">
-                  Dr. {selectedDoctor.name}
-                </h3>
-                <p className="text-gray-600 text-sm">
-                  Department: {selectedDoctor.department}
-                </p>
-                <p className="text-gray-600 text-sm">
-                  Experience: {selectedDoctor.experience} years
-                </p>
-                <p className="text-gray-600 text-sm">
-                  Consultation Fee: ₹{selectedDoctor.fees}
-                </p>
+            {/* Content */}
+            <div className="p-8">
+              {error && (
+                <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-6 py-4 rounded-lg mb-6 animate-fade-in-up flex items-start gap-3">
+                  <span className="text-xl">⚠️</span>
+                  <span>{error}</span>
+                </div>
+              )}
+
+              {success && (
+                <div className="bg-green-50 border-l-4 border-green-500 text-green-700 px-6 py-4 rounded-lg mb-6 animate-fade-in-up flex items-start gap-3">
+                  <span className="text-xl">✅</span>
+                  <span>{success}</span>
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} className="space-y-8">
+                {/* Doctor Selection */}
+                <div className="animate-fade-in-up animation-delay-100">
+                  <label className="block text-sm font-bold text-gray-800 mb-3">
+                    Select Doctor <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    name="doctorId"
+                    value={formData.doctorId}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border-2 border-blue-200 rounded-lg focus:border-blue-500 focus:outline-none text-gray-700 transition-all bg-white"
+                    required
+                  >
+                    <option value="">Choose a doctor...</option>
+                    {doctors.map((doctor) => (
+                      <option key={doctor._id} value={doctor._id}>
+                        Dr. {doctor.name} - {doctor.department} (₹{doctor.fees})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Doctor Preview Card */}
+                {selectedDoctor && (
+                  <div className={`bg-gradient-to-r ${deptColor.color} rounded-xl p-6 text-white shadow-lg animate-fade-in-up animation-delay-100 transform hover:scale-105 transition-transform`}>
+                    <div className="flex items-start gap-4">
+                      <div className="text-4xl">{deptColor.icon}</div>
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold mb-3">Dr. {selectedDoctor.name}</h3>
+                        <div className="space-y-2 text-sm font-medium">
+                          <p>🏥 Department: {selectedDoctor.department}</p>
+                          <p>⭐ Experience: {selectedDoctor.experience} years</p>
+                          <p>📧 Specialization: {selectedDoctor.specialization}</p>
+                          <p className="text-lg font-bold mt-3">💰 Consultation Fee: ₹{selectedDoctor.fees}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Date Selection */}
+                <div className="animate-fade-in-up animation-delay-200">
+                  <label className="block text-sm font-bold text-gray-800 mb-3">
+                    Appointment Date <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    name="date"
+                    value={formData.date}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border-2 border-blue-200 rounded-lg focus:border-blue-500 focus:outline-none text-gray-700 transition-all"
+                    required
+                  />
+                </div>
+
+                {/* Time Selection */}
+                <div className="animate-fade-in-up animation-delay-300">
+                  <label className="block text-sm font-bold text-gray-800 mb-3">
+                    Appointment Time <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    name="time"
+                    value={formData.time}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border-2 border-blue-200 rounded-lg focus:border-blue-500 focus:outline-none text-gray-700 transition-all bg-white"
+                    required
+                  >
+                    <option value="">Select time slot...</option>
+                    <option value="09:00 AM">09:00 AM</option>
+                    <option value="10:00 AM">10:00 AM</option>
+                    <option value="11:00 AM">11:00 AM</option>
+                    <option value="12:00 PM">12:00 PM</option>
+                    <option value="02:00 PM">02:00 PM</option>
+                    <option value="03:00 PM">03:00 PM</option>
+                    <option value="04:00 PM">04:00 PM</option>
+                    <option value="05:00 PM">05:00 PM</option>
+                  </select>
+                </div>
+
+                {/* Notes */}
+                <div className="animate-fade-in-up animation-delay-400">
+                  <label className="block text-sm font-bold text-gray-800 mb-3">
+                    Additional Notes <span className="text-gray-500 font-normal">(Optional)</span>
+                  </label>
+                  <textarea
+                    name="notes"
+                    value={formData.notes}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border-2 border-blue-200 rounded-lg focus:border-blue-500 focus:outline-none text-gray-700 transition-all resize-none"
+                    placeholder="Describe your symptoms, medical history, or any concerns..."
+                    rows="4"
+                  />
+                </div>
+
+                {/* Submit Button */}
+                <div className="animate-fade-in-up animation-delay-500">
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold py-4 rounded-lg hover:opacity-90 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {submitting ? "🔄 Booking..." : "✓ Book Appointment"}
+                  </button>
+                </div>
+
+                {/* Info Box */}
+                <div className="bg-blue-50 border-l-4 border-blue-500 px-6 py-4 rounded-lg animate-fade-in-up animation-delay-500">
+                  <p className="text-sm text-gray-700">
+                    <span className="font-bold">📌 Note:</span> Please ensure you select a future date. You will receive a confirmation email once your appointment is booked.
+                  </p>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          {/* Why Book With Us */}
+          <div className="mt-12">
+            <h3 className="text-2xl font-bold text-gray-800 mb-8 text-center animate-fade-in-up">Why Book With Us?</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-white rounded-lg p-6 shadow-md text-center animate-fade-in-up animation-delay-100 hover:shadow-lg transition">
+                <div className="text-4xl mb-4">📱</div>
+                <h4 className="font-bold text-gray-800 mb-2">Easy Booking</h4>
+                <p className="text-gray-600 text-sm">Simple and hassle-free appointment scheduling</p>
               </div>
-            )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Appointment Date *
-              </label>
-              <input
-                type="date"
-                name="date"
-                value={formData.date}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
+              <div className="bg-white rounded-lg p-6 shadow-md text-center animate-fade-in-up animation-delay-200 hover:shadow-lg transition">
+                <div className="text-4xl mb-4">🏥</div>
+                <h4 className="font-bold text-gray-800 mb-2">Expert Doctors</h4>
+                <p className="text-gray-600 text-sm">Highly qualified and experienced specialists</p>
+              </div>
+
+              <div className="bg-white rounded-lg p-6 shadow-md text-center animate-fade-in-up animation-delay-300 hover:shadow-lg transition">
+                <div className="text-4xl mb-4">✅</div>
+                <h4 className="font-bold text-gray-800 mb-2">Instant Confirmation</h4>
+                <p className="text-gray-600 text-sm">Get immediate booking confirmation via email</p>
+              </div>
             </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Appointment Time *
-              </label>
-              <select
-                name="time"
-                value={formData.time}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              >
-                <option value="">Select time slot</option>
-                <option value="09:00 AM">09:00 AM</option>
-                <option value="10:00 AM">10:00 AM</option>
-                <option value="11:00 AM">11:00 AM</option>
-                <option value="12:00 PM">12:00 PM</option>
-                <option value="02:00 PM">02:00 PM</option>
-                <option value="03:00 PM">03:00 PM</option>
-                <option value="04:00 PM">04:00 PM</option>
-                <option value="05:00 PM">05:00 PM</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Notes (Optional)
-              </label>
-              <textarea
-                name="notes"
-                value={formData.notes}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Add any notes or symptoms"
-                rows="4"
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={submitting}
-              className="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition disabled:bg-gray-400"
-            >
-              {submitting ? "Booking..." : "Book Appointment"}
-            </button>
-          </form>
+          </div>
         </div>
       </div>
     </div>

@@ -25,7 +25,7 @@ export default function Footer() {
           <h4 className="font-semibold mb-4">Quick Links</h4>
           <ul className="space-y-2 text-sm text-gray-600">
             <li>
-              <Link href="/doctors" className="hover:text-blue-600">
+              <Link href="/Doctors" className="hover:text-blue-600">
                 Find a Doctor
               </Link>
             </li>
@@ -79,13 +79,13 @@ export default function Footer() {
           <h4 className="font-semibold mb-4">Contact Info</h4>
           <ul className="space-y-3 text-sm text-gray-600">
             <li className="flex gap-2">
-              📧 support@healthsync.com
+              📧 chetanthakru0507@gmail.com
             </li>
             <li className="flex gap-2">
-              📞 +1 (555) 000-1234
+              📞 +91-7820022516
             </li>
             <li className="flex gap-2">
-              📍 123 Healthcare Way, Medical District
+              📍  Chetan&#39;s Hospital,Rampur
             </li>
           </ul>
         </div>
@@ -93,7 +93,7 @@ export default function Footer() {
 
       {/* Bottom Bar */}
       <div className="border-t text-center text-sm text-gray-500 py-4">
-        © 2024 HealthSync Medical Group. All rights reserved.
+        © 2026 Medi.Care Medical Group. All rights reserved.
       </div>
     </footer>
   );

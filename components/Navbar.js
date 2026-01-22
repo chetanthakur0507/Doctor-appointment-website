@@ -8,8 +8,8 @@ const NavbarList = [
   { title: "Home", href: "/#home" },
   { title: "Doctors", href: "/Doctors" },
   { title: "Departments", href: "/departments" },
-  { title: "Appointment", href: "/#appointment" },
-  { title: "Contact", href: "/#contact" },
+  { title: "Appointment", href: "/user/appointments/book" },
+  { title: "Contact", href: "/contact" },
 ];
 
 const Navbar = () => {
