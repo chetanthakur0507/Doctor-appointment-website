@@ -14,6 +14,7 @@ export default function ContactPage() {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [whatsappHover, setWhatsappHover] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -63,8 +64,44 @@ export default function ContactPage() {
     }
   };
 
+  const whatsappNumber = "+91 7820022516";
+  const whatsappMessage = "Hello! I would like to ask something.";
+
+  const handleWhatsApp = () => {
+    const encodedMessage = encodeURIComponent(whatsappMessage);
+    const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/[^\d]/g, '')}?text=${encodedMessage}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+      {/* WhatsApp Floating Button */}
+      <div className="fixed bottom-6 right-6 z-40">
+        <button
+          onClick={handleWhatsApp}
+          onMouseEnter={() => setWhatsappHover(true)}
+          onMouseLeave={() => setWhatsappHover(false)}
+          className="bg-green-500 hover:bg-green-600 text-white rounded-full p-4 shadow-lg transition-all transform hover:scale-110 flex items-center justify-center"
+          title="Chat with us on WhatsApp"
+          aria-label="WhatsApp"
+        >
+          <svg
+            className="w-6 h-6"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421-7.403h-.004a9.87 9.87 0 00-4.924 1.44c-.658.362-1.267.839-1.767 1.418C2.847 9.903 1.514 12.345 1.514 15.032c0 1.465.356 2.867 1.016 4.129L1.432 23.5l4.747-1.245c1.188.64 2.531.992 3.935.992h.004c4.993 0 9.05-4.057 9.05-9.05 0-2.415-.936-4.684-2.639-6.387s-3.972-2.639-6.387-2.639z" />
+          </svg>
+        </button>
+        {whatsappHover && (
+          <div className="absolute bottom-full right-0 mb-3 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium whitespace-nowrap animate-fade-in-up pointer-events-none">
+            WhatsApp par msg bhejein
+            <div className="absolute top-full right-4 w-2 h-2 bg-gray-800 transform rotate-45"></div>
+          </div>
+        )}
+      </div>
+
       {/* Header Section */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-16 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
