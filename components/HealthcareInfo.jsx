@@ -30,7 +30,7 @@ export default function HealthcareInfo() {
             <li className="flex items-start gap-2"><span className="text-pink-400">✓</span> Pediatric Health Care</li>
             <li className="flex items-start gap-2"><span className="text-pink-400">✓</span> Orthopedic & Joint Pain</li>
             <li className="flex items-start gap-2"><span className="text-pink-400">✓</span> Neurological Conditions</li>
-            <li className="flex items-start gap-2"><span className="text-pink-400">✓</span> Women's Health Issues</li>
+            <li className="flex items-start gap-2"><span className="text-pink-400">✓</span> Women&apos;s Health Issues</li>
           </ul>
 
           <button className="mt-8 bg-gradient-to-r from-green-400 to-emerald-500 text-white px-8 py-4 rounded-full font-bold hover:scale-110 transition-transform duration-300 shadow-lg hover:shadow-2xl w-full text-base">

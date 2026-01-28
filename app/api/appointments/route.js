@@ -47,7 +47,7 @@ export async function GET(req) {
   }
 }
 
-// POST - Book appointment
+// POST - Book appointment or check duplicates
 export async function POST(req) {
   try {
     await dbConnect();
@@ -67,7 +67,37 @@ export async function POST(req) {
       });
     }
 
-    const { doctorId, date, time, notes } = await req.json();
+    const url = new URL(req.url);
+    const isCheckDuplicate = url.searchParams.get("checkDuplicate") === "true";
+
+    const { doctorId, date, time, notes, paymentId, paymentStatus } = await req.json();
+
+    // Check for duplicate booking (same doctor, date, time)
+    const existingAppointment = await Appointment.findOne({
+      doctorId,
+      date: new Date(date),
+      time,
+      status: { $in: ["booked", "confirmed", "completed"] },
+    });
+
+    if (isCheckDuplicate) {
+      return new Response(
+        JSON.stringify({
+          isDuplicate: !!existingAppointment,
+          message: existingAppointment ? "Slot already booked" : "Slot available",
+        }),
+        { status: 200 }
+      );
+    }
+
+    if (existingAppointment) {
+      return new Response(
+        JSON.stringify({
+          message: "❌ This time slot with this doctor is already booked. Please choose another time.",
+        }),
+        { status: 400 }
+      );
+    }
 
     // Count previous sessions with same doctor
     const previousAppointments = await Appointment.countDocuments({
@@ -82,6 +112,8 @@ export async function POST(req) {
       date: new Date(date),
       time,
       notes,
+      paymentId: paymentId || null,
+      paymentStatus: paymentStatus || "pending",
       sessionNumber: previousAppointments + 1,
       status: "booked",
     });
@@ -92,7 +124,7 @@ export async function POST(req) {
   } catch (error) {
     console.error("Error booking appointment:", error);
     return new Response(
-      JSON.stringify({ message: "Error booking appointment" }),
+      JSON.stringify({ message: "Error booking appointment", error: error.message }),
       { status: 500 }
     );
   }

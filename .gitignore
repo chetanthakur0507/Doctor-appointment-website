@@ -37,3 +37,5 @@ next-env.d.ts
 
 # Custom files
 .txt
+.vercel
+.env*.local

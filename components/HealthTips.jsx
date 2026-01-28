@@ -95,7 +95,7 @@ export default function HealthTips() {
           <div className="relative z-10">
             <div className="text-6xl mb-6">🏥</div>
             <blockquote className="text-2xl md:text-3xl font-bold mb-4 italic">
-              "Health is not just about what you're eating. It's also about what you're thinking and saying."
+              &ldquo;Health is not just about what you&apos;re eating. It&apos;s also about what you&apos;re thinking and saying.&rdquo;
             </blockquote>
             <p className="text-lg opacity-90">- Anonymous</p>
           </div>

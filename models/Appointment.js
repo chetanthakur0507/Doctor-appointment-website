@@ -28,6 +28,15 @@ const appointmentSchema = new mongoose.Schema(
     notes: {
       type: String,
     },
+    paymentId: {
+      type: String,
+      default: null,
+    },
+    paymentStatus: {
+      type: String,
+      enum: ["pending", "completed", "failed"],
+      default: "pending",
+    },
     sessionNumber: {
       type: Number,
       default: 1,

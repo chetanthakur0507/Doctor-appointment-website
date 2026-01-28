@@ -3,6 +3,9 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+
+const RazorpayPayment = dynamic(() => import("@/components/RazorpayPayment"), { ssr: false });
 
 export default function BookAppointment() {
   const [doctors, setDoctors] = useState([]);
@@ -16,6 +19,8 @@ export default function BookAppointment() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [showPayment, setShowPayment] = useState(false);
+  const [appointmentData, setAppointmentData] = useState(null);
   const router = useRouter();
 
   // Department color mappings
@@ -77,16 +82,62 @@ export default function BookAppointment() {
       return;
     }
 
-    setSubmitting(true);
+    // Validate date (no past dates)
+    const selectedDate = new Date(formData.date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (selectedDate < today) {
+      setError("❌ Cannot book appointment for past dates. Please select today or a future date.");
+      return;
+    }
+
+    // Check for duplicate bookings
     try {
       const token = localStorage.getItem("token");
+      const checkRes = await fetch("/api/appointments?checkDuplicate=true", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          doctorId: formData.doctorId,
+          date: formData.date,
+          time: formData.time,
+        }),
+      });
+
+      const checkData = await checkRes.json();
+      if (!checkRes.ok || checkData.isDuplicate) {
+        setError("❌ This time slot with this doctor is already booked. Please choose another time or date.");
+        return;
+      }
+    } catch (err) {
+      console.log("Could not check duplicates, proceeding anyway");
+    }
+
+    // Store appointment data and show payment
+    setAppointmentData(formData);
+    setShowPayment(true);
+  };
+
+  const handlePaymentSuccess = async (paymentId) => {
+    try {
+      setSubmitting(true);
+      const token = localStorage.getItem("token");
+
       const res = await fetch("/api/appointments", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...appointmentData,
+          paymentId,
+          paymentStatus: "completed",
+        }),
       });
 
       const data = await res.json();
@@ -96,16 +147,22 @@ export default function BookAppointment() {
         return;
       }
 
-      setSuccess("Appointment booked successfully! Redirecting...");
+      setSuccess("✅ Appointment booked successfully! Redirecting...");
+      setShowPayment(false);
       setTimeout(() => {
         router.push("/user/dashboard");
       }, 2000);
     } catch (error) {
-      setError("Something went wrong. Please try again.");
+      setError("Appointment booking failed after payment. Please contact support.");
       console.error("Error booking appointment:", error);
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handlePaymentFailure = (errorMsg) => {
+    setError(`Payment failed: ${errorMsg}. Please try again.`);
+    setShowPayment(false);
   };
 
   if (loading) {
@@ -121,6 +178,7 @@ export default function BookAppointment() {
 
   const selectedDoctor = doctors.find((d) => d._id === formData.doctorId);
   const deptColor = selectedDoctor ? getColorForDept(selectedDoctor.department) : null;
+  const appointmentFee = selectedDoctor?.fees || 500; // Use doctor's fee or default 500
 
   return (
     <div className="bg-gradient-to-b from-blue-50 to-white min-h-screen">
@@ -174,6 +232,21 @@ export default function BookAppointment() {
                 </div>
               )}
 
+              {/* Doctor Fee Display */}
+              {selectedDoctor && (
+                <div className="bg-blue-50 border-l-4 border-blue-500 px-6 py-4 rounded-lg animate-fade-in-up mb-6 flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-700">
+                      <span className="font-bold">Selected Doctor:</span> Dr. {selectedDoctor.name}
+                    </p>
+                    <p className="text-sm text-gray-600 mt-1">
+                      <span className="font-bold">Consultation Fee:</span> ₹{selectedDoctor.fees}
+                    </p>
+                  </div>
+                  <div className="text-3xl font-bold text-blue-600">₹{selectedDoctor.fees}</div>
+                </div>
+              )}
+
               <form onSubmit={handleSubmit} className="space-y-8">
                 {/* Doctor Selection */}
                 <div className="animate-fade-in-up animation-delay-100">
@@ -224,9 +297,11 @@ export default function BookAppointment() {
                     name="date"
                     value={formData.date}
                     onChange={handleChange}
+                    min={new Date().toISOString().split('T')[0]}
                     className="w-full px-4 py-3 border-2 border-blue-200 rounded-lg focus:border-blue-500 focus:outline-none text-gray-700 transition-all"
                     required
                   />
+                  <p className="text-xs text-gray-500 mt-2">📅 Only future dates allowed</p>
                 </div>
 
                 {/* Time Selection */}
@@ -268,21 +343,64 @@ export default function BookAppointment() {
                   />
                 </div>
 
-                {/* Submit Button */}
-                <div className="animate-fade-in-up animation-delay-500">
+                {/* Submit Buttons */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fade-in-up animation-delay-500">
+                  <button
+                    type="button"
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      setError("");
+                      setSuccess("");
+                      if (!formData.doctorId || !formData.date || !formData.time) {
+                        setError("Please fill all required fields");
+                        return;
+                      }
+                      setSubmitting(true);
+                      try {
+                        const token = localStorage.getItem("token");
+                        const res = await fetch("/api/appointments", {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`,
+                          },
+                          body: JSON.stringify(formData),
+                        });
+                        const data = await res.json();
+                        if (!res.ok) {
+                          setError(data.message || "Failed to book appointment");
+                          return;
+                        }
+                        setSuccess("✅ Appointment booked successfully! Redirecting...");
+                        setTimeout(() => {
+                          router.push("/user/dashboard");
+                        }, 2000);
+                      } catch (error) {
+                        setError("Something went wrong. Please try again.");
+                        console.error("Error booking appointment:", error);
+                      } finally {
+                        setSubmitting(false);
+                      }
+                    }}
+                    disabled={submitting}
+                    className="bg-gradient-to-r from-green-600 to-green-700 text-white font-bold py-4 rounded-lg hover:opacity-90 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {submitting ? "🔄 Booking..." : "✓ Book Appointment"}
+                  </button>
+
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold py-4 rounded-lg hover:opacity-90 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold py-4 rounded-lg hover:opacity-90 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {submitting ? "🔄 Booking..." : "✓ Book Appointment"}
+                    {submitting ? "🔄 Processing..." : "💳 Proceed to Payment"}
                   </button>
                 </div>
 
                 {/* Info Box */}
                 <div className="bg-blue-50 border-l-4 border-blue-500 px-6 py-4 rounded-lg animate-fade-in-up animation-delay-500">
                   <p className="text-sm text-gray-700">
-                    <span className="font-bold">📌 Note:</span> Please ensure you select a future date. You will receive a confirmation email once your appointment is booked.
+                    <span className="font-bold">📌 Note:</span> Please ensure you select a future date. You will receive a confirmation email once your appointment is booked. Payment is optional.
                   </p>
                 </div>
               </form>

@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic";
 import HealthcareInfo from "@/components/HealthcareInfo";
 import Hero from "@/components/Hero";
 import Specialties from "@/components/Specialties";
@@ -11,6 +12,8 @@ import EmergencyContact from "@/components/EmergencyContact";
 import AppointmentCTA from "@/components/AppointmentCTA";
 import HealthTips from "@/components/HealthTips";
 import OurServices from "@/components/OurServices";
+
+const LiveChatWidget = dynamic(() => import("@/components/LiveChatWidget"), { ssr: false });
 
 export default function Home() {
   return (
@@ -28,6 +31,7 @@ export default function Home() {
       <Testimonials />
       <Newsletter />
       <HealthcareInfo />
+      <LiveChatWidget />
     </>
   );
 }

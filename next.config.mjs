@@ -10,6 +10,18 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'i.pravatar.cc',
       },
+      {
+        protocol: 'https',
+        hostname: 'media.istockphoto.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.istockphoto.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.amazonaws.com',
+      },
     ],
   },
 };
