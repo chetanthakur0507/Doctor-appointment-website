@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
-export default function DoctorsPage() {
+function DoctorsContent() {
   const searchParams = useSearchParams();
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -277,5 +277,20 @@ export default function DoctorsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function DoctorsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50 to-white">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200 border-t-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 font-semibold">Loading doctors...</p>
+        </div>
+      </div>
+    }>
+      <DoctorsContent />
+    </Suspense>
   );
 }

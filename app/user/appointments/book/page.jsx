@@ -21,6 +21,7 @@ export default function BookAppointment() {
   const [success, setSuccess] = useState("");
   const [showPayment, setShowPayment] = useState(false);
   const [appointmentData, setAppointmentData] = useState(null);
+  const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
   const router = useRouter();
 
   // Department color mappings
@@ -42,7 +43,25 @@ export default function BookAppointment() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const userStr = localStorage.getItem("user");
     if (!token) {
+      router.push("/auth/login");
+      return;
+    }
+
+    if (!userStr) {
+      router.push("/auth/login");
+      return;
+    }
+
+    try {
+      const userData = JSON.parse(userStr);
+      if (userData?.role !== "user") {
+        router.push(userData?.role === "admin" ? "/admin/dashboard" : "/doctor/dashboard");
+        return;
+      }
+    } catch (err) {
+      console.error("Invalid user data", err);
       router.push("/auth/login");
       return;
     }
@@ -63,12 +82,69 @@ export default function BookAppointment() {
     }
   };
 
+  // Get available time slots based on selected date
+  const getAvailableTimeSlots = (selectedDate) => {
+    const allSlots = [
+      "09:00 AM",
+      "10:00 AM",
+      "11:00 AM",
+      "12:00 PM",
+      "02:00 PM",
+      "03:00 PM",
+      "04:00 PM",
+      "05:00 PM",
+    ];
+
+    // If the selected date is today, filter out past times
+    const selected = new Date(selectedDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    selected.setHours(0, 0, 0, 0);
+
+    if (selected.getTime() === today.getTime()) {
+      // It's today - filter out past times
+      const now = new Date();
+      const currentHour = now.getHours();
+      const currentMinute = now.getMinutes();
+
+      return allSlots.filter((slot) => {
+        const [time, period] = slot.split(" ");
+        let [hours] = time.split(":");
+        hours = parseInt(hours);
+
+        // Convert to 24-hour format
+        if (period === "PM" && hours !== 12) hours += 12;
+        if (period === "AM" && hours === 12) hours = 0;
+
+        // Check if this slot time is in the future
+        if (hours > currentHour) return true;
+        if (hours === currentHour && parseInt(time.split(":")[1]) > currentMinute) return true;
+
+        return false;
+      });
+    }
+
+    // Future date - all slots available
+    return allSlots;
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
+    
+    // If date changes, update available time slots and clear time selection
+    if (name === "date" && value) {
+      const slots = getAvailableTimeSlots(value);
+      setAvailableTimeSlots(slots);
+      setFormData((prev) => ({
+        ...prev,
+        time: "", // Reset time selection when date changes
+      }));
+    }
+    
     setError("");
   };
 
@@ -203,9 +279,10 @@ export default function BookAppointment() {
           {/* Back Button */}
           <Link 
             href="/user/dashboard" 
-            className="inline-block text-blue-600 hover:text-blue-700 font-semibold mb-8 flex items-center gap-2 transition"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-white text-blue-600 rounded-lg font-semibold border border-blue-200 hover:bg-blue-50 hover:shadow-md transition-all duration-300 transform hover:scale-105 mb-8"
           >
-            ← Back to Dashboard
+            <span>←</span>
+            Back to Dashboard
           </Link>
 
           {/* Form Card */}
@@ -309,23 +386,44 @@ export default function BookAppointment() {
                   <label className="block text-sm font-bold text-gray-800 mb-3">
                     Appointment Time <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    name="time"
-                    value={formData.time}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border-2 border-blue-200 rounded-lg focus:border-blue-500 focus:outline-none text-gray-700 transition-all bg-white"
-                    required
-                  >
-                    <option value="">Select time slot...</option>
-                    <option value="09:00 AM">09:00 AM</option>
-                    <option value="10:00 AM">10:00 AM</option>
-                    <option value="11:00 AM">11:00 AM</option>
-                    <option value="12:00 PM">12:00 PM</option>
-                    <option value="02:00 PM">02:00 PM</option>
-                    <option value="03:00 PM">03:00 PM</option>
-                    <option value="04:00 PM">04:00 PM</option>
-                    <option value="05:00 PM">05:00 PM</option>
-                  </select>
+                  {formData.date ? (
+                    <>
+                      <select
+                        name="time"
+                        value={formData.time}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 border-2 border-blue-200 rounded-lg focus:border-blue-500 focus:outline-none text-gray-700 transition-all bg-white"
+                        required
+                      >
+                        <option value="">Select time slot...</option>
+                        {availableTimeSlots.length > 0 ? (
+                          availableTimeSlots.map((slot) => (
+                            <option key={slot} value={slot}>
+                              {slot}
+                            </option>
+                          ))
+                        ) : (
+                          <option disabled>No available slots for this date</option>
+                        )}
+                      </select>
+                      {availableTimeSlots.length === 0 && formData.date && (
+                        <p className="text-xs text-red-500 mt-2">⏰ All time slots have passed for today. Please select tomorrow or a future date.</p>
+                      )}
+                      {availableTimeSlots.length > 0 && (
+                        <p className="text-xs text-gray-500 mt-2">⏰ Only available future time slots are shown</p>
+                      )}
+                    </>
+                  ) : (
+                    <select
+                      name="time"
+                      value={formData.time}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-gray-500 transition-all bg-gray-100 cursor-not-allowed"
+                      disabled
+                    >
+                      <option value="">Please select a date first...</option>
+                    </select>
+                  )}
                 </div>
 
                 {/* Notes */}

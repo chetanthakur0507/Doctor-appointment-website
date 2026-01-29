@@ -25,9 +25,39 @@ const userSchema = new mongoose.Schema(
     phone: {
       type: String,
     },
+    dateOfBirth: {
+      type: Date,
+    },
+    gender: {
+      type: String,
+    },
+    bloodGroup: {
+      type: String,
+    },
+    allergies: {
+      type: [String],
+      default: [],
+    },
+    medicalHistory: {
+      type: [String],
+      default: [],
+    },
+    currentMedications: {
+      type: [String],
+      default: [],
+    },
+    emergencyContactName: {
+      type: String,
+    },
+    emergencyContactPhone: {
+      type: String,
+    },
+    address: {
+      type: String,
+    },
     role: {
       type: String,
-      enum: ["user", "admin"],
+      enum: ["user", "admin", "doctor"],
       default: "user",
     },
     createdAt: {

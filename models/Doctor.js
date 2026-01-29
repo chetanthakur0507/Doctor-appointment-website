@@ -37,6 +37,24 @@ const doctorSchema = new mongoose.Schema(
     bio: {
       type: String,
     },
+    biography: {
+      type: String,
+    },
+    education: {
+      type: [String],
+      default: [],
+    },
+    certifications: {
+      type: [String],
+      default: [],
+    },
+    languages: {
+      type: [String],
+      default: [],
+    },
+    clinicAddress: {
+      type: String,
+    },
     availability: {
       type: [String],
       default: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],

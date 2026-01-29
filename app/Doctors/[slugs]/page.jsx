@@ -22,7 +22,7 @@ export default function DoctorProfilePage() {
 
   const fetchDoctor = async (id) => {
     try {
-      const res = await fetch(`/api/doctors/${id}`);
+      const res = await fetch(`/api/doctors/${id}`, { cache: "no-store" });
       if (!res.ok) {
         setError("Doctor not found");
         return;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -12,6 +12,23 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const userStr = localStorage.getItem("user");
+    if (!token || !userStr) return;
+
+    try {
+      const user = JSON.parse(userStr);
+      if (user?.role === "admin") {
+        router.push("/admin/dashboard");
+      } else {
+        router.push("/user/dashboard");
+      }
+    } catch (err) {
+      console.error("Invalid user data", err);
+    }
+  }, [router]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -46,8 +63,14 @@ export default function LoginPage() {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      // Redirect to user dashboard
-      router.push("/user/dashboard");
+      // Redirect based on role
+      if (data.user?.role === "admin") {
+        router.push("/admin/dashboard");
+      } else if (data.user?.role === "doctor") {
+        router.push("/doctor/dashboard");
+      } else {
+        router.push("/user/dashboard");
+      }
     } catch (error) {
       setError("Something went wrong. Please try again.");
       console.error("Login error:", error);
@@ -113,7 +136,7 @@ export default function LoginPage() {
         </form>
 
         <p className="text-center text-gray-600 mt-6">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link href="/auth/register" className="text-blue-600 font-semibold hover:underline">
             Register
           </Link>

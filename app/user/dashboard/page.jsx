@@ -7,6 +7,8 @@ import Link from "next/link";
 export default function UserDashboard() {
   const [user, setUser] = useState(null);
   const [appointments, setAppointments] = useState([]);
+  const [profile, setProfile] = useState(null);
+  const [profileError, setProfileError] = useState("");
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -37,9 +39,43 @@ export default function UserDashboard() {
     }
 
     const userData = JSON.parse(userStr);
+    if (userData?.role !== "user") {
+      router.push(userData?.role === "admin" ? "/admin/dashboard" : "/doctor/dashboard");
+      return;
+    }
     setUser(userData);
     fetchAppointments(token);
+    fetchProfile(token);
   }, [router]);
+
+  const fetchProfile = async (token) => {
+    try {
+      setProfileError("");
+      const res = await fetch("/api/user/profile", {
+        headers: { "Authorization": `Bearer ${token}` },
+        cache: "no-store",
+        credentials: "include",
+      });
+      if (!res.ok) {
+        const cached = localStorage.getItem("userProfile");
+        if (cached) {
+          setProfile(JSON.parse(cached));
+        }
+        setProfileError("Profile not loaded. Please refresh.");
+        return;
+      }
+      const data = await res.json();
+      setProfile(data);
+      localStorage.setItem("userProfile", JSON.stringify(data));
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      const cached = localStorage.getItem("userProfile");
+      if (cached) {
+        setProfile(JSON.parse(cached));
+      }
+      setProfileError("Profile not loaded. Please refresh.");
+    }
+  };
 
   const fetchAppointments = async (token) => {
     try {
@@ -49,8 +85,13 @@ export default function UserDashboard() {
         },
       });
       const data = await res.json();
-      // Ensure data is an array
-      setAppointments(Array.isArray(data) ? data : []);
+      // Ensure data is an array and sort by creation date (newest first)
+      if (Array.isArray(data)) {
+        const sortedData = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setAppointments(sortedData);
+      } else {
+        setAppointments([]);
+      }
     } catch (error) {
       console.error("Error fetching appointments:", error);
       setAppointments([]);
@@ -103,12 +144,61 @@ export default function UserDashboard() {
         </div>
 
         <div className="relative z-10 px-4 sm:px-10 lg:px-20">
-          <div className="animate-fade-in-up">
-            <h1 className="text-4xl sm:text-5xl font-bold mb-2">
-              Welcome, {user?.name}! 👋
-            </h1>
-            <p className="text-lg text-blue-100">Manage your medical appointments and health records</p>
+          <div className="flex items-center justify-between">
+            <div className="animate-fade-in-up flex-1">
+              <h1 className="text-4xl sm:text-5xl font-bold mb-2">
+                Welcome, {user?.name}! 👋
+              </h1>
+              <p className="text-lg text-blue-100">Manage your medical appointments and health records</p>
+            </div>
+            <div className="hidden sm:flex items-center gap-3">
+              <Link
+                href="/user/profile"
+                className="flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-400 hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+              >
+                <span>🧾</span>
+                Edit Profile
+              </Link>
+              <Link
+                href="/"
+                className="flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+              >
+                <span>🏠</span>
+                Back to Home
+              </Link>
+            </div>
           </div>
+        </div>
+      </div>
+
+      {/* Profile Summary */}
+      <div className="px-4 sm:px-10 lg:px-20 -mt-8">
+        <div className="bg-white rounded-2xl shadow-lg border border-blue-100 p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900">Patient Profile</h2>
+            <p className="text-gray-600 text-sm mt-1">
+              {profile ? "Your medical profile is shared with your doctor for better care." : "Complete your profile to help doctors treat you better."}
+            </p>
+            {profileError && (
+              <p className="text-sm text-red-600 mt-2">{profileError}</p>
+            )}
+            {profile && (
+              <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm text-gray-700">
+                <div><span className="text-gray-500">DOB:</span> {profile.dateOfBirth ? new Date(profile.dateOfBirth).toLocaleDateString() : "—"}</div>
+                <div><span className="text-gray-500">Gender:</span> {profile.gender || "—"}</div>
+                <div><span className="text-gray-500">Blood Group:</span> {profile.bloodGroup || "—"}</div>
+                <div><span className="text-gray-500">Allergies:</span> {profile.allergies?.length ? profile.allergies.join(", ") : "—"}</div>
+                <div><span className="text-gray-500">Medical History:</span> {profile.medicalHistory?.length ? profile.medicalHistory.join(", ") : "—"}</div>
+                <div><span className="text-gray-500">Medications:</span> {profile.currentMedications?.length ? profile.currentMedications.join(", ") : "—"}</div>
+              </div>
+            )}
+          </div>
+          <Link
+            href="/user/profile"
+            className="inline-flex items-center gap-2 px-5 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 hover:shadow-lg transition-all duration-300"
+          >
+            {profile ? "Update Profile" : "Create Profile"}
+          </Link>
         </div>
       </div>
 
@@ -206,6 +296,14 @@ export default function UserDashboard() {
                                 <p className="font-semibold text-gray-800">{appointment.doctorId?.department || "N/A"}</p>
                               </div>
                             </div>
+                            {appointment.status === "completed" && appointment.completedAt && (
+                              <div className="mt-4 pt-4 border-t border-gray-200">
+                                <p className="text-gray-600 mb-1">✅ Completed on</p>
+                                <p className="font-semibold text-green-600">
+                                  {new Date(appointment.completedAt).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' })} at {new Date(appointment.completedAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                                </p>
+                              </div>
+                            )}
                           </div>
 
                           {/* Status & Actions */}

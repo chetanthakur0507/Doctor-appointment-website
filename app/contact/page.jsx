@@ -320,14 +320,39 @@ export default function ContactPage() {
           </div>
         </div>
 
-        {/* Map or Additional Info */}
+        {/* Map Section */}
         <div className="mt-16 max-w-7xl mx-auto">
+          <h3 className="text-3xl font-bold text-gray-800 mb-8 text-center animate-fade-in-up">📍 Find Us on Map</h3>
           <div className="bg-white rounded-xl shadow-lg overflow-hidden animate-fade-in-up">
-            <div className="bg-gradient-to-r from-blue-500 to-cyan-500 h-64 flex items-center justify-center">
-              <div className="text-center text-white">
-                <div className="text-6xl mb-4">🗺️</div>
-                <h3 className="text-2xl font-bold mb-2">Find Us on Map</h3>
-                <p className="text-blue-100">123 Healthcare Way, Medical District</p>
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d1190.0538123561018!2d78.9706934614969!3d28.464354177970662!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMjjCsDI3JzUyLjAiTiA3OMKwNTgnMTcuMyJF!5e1!3m2!1sen!2sin!4v1769685945169!5m2!1sen!2sin"
+              width="100%"
+              height="450"
+              style={{ border: 0 }}
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          </div>
+          <div className="mt-6 bg-white rounded-xl shadow-md p-6 animate-fade-in-up">
+            <h4 className="text-xl font-bold text-gray-800 mb-4">📌 Clinic Location</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <p className="text-gray-700 font-semibold mb-2">Address:</p>
+                <p className="text-gray-600">123 Healthcare Way</p>
+                <p className="text-gray-600">Medical District, City 12345</p>
+                <p className="text-gray-600 mt-3 font-semibold">Coordinates:</p>
+                <p className="text-gray-600">Latitude: 26.9124°N</p>
+                <p className="text-gray-600">Longitude: 75.8649°E</p>
+              </div>
+              <div>
+                <p className="text-gray-700 font-semibold mb-2">Getting Here:</p>
+                <ul className="text-gray-600 space-y-2 list-disc list-inside">
+                  <li>Located in Medical District center</li>
+                  <li>Easy access from main road</li>
+                  <li>Ample parking available</li>
+                  <li>Near public transportation</li>
+                </ul>
               </div>
             </div>
           </div>

@@ -13,6 +13,8 @@ export default function AdminDashboard() {
     users: 0,
     appointments: 0,
     completed: 0,
+    booked: 0,
+    cancelled: 0,
   });
   const [recentAppointments, setRecentAppointments] = useState([]);
 
@@ -58,8 +60,15 @@ export default function AdminDashboard() {
         users: users.length || 0,
         appointments: appointments.length || 0,
         completed: appointments.filter((a) => a.status === "completed").length,
+        booked: appointments.filter((a) => a.status === "booked").length,
+        cancelled: appointments.filter((a) => a.status === "cancelled").length,
       });
-      setRecentAppointments(appointments.slice(0, 5));
+      // Show only recent booked appointments (not completed) - sorted by creation date
+      const recentBookedApts = appointments
+        .filter((a) => a.status === "booked")
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 5);
+      setRecentAppointments(recentBookedApts);
     } catch (err) {
       console.error("Admin dashboard load error", err);
       setError("Failed to load data");
@@ -84,12 +93,13 @@ export default function AdminDashboard() {
             <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
             <p className="text-gray-600">Overview of the platform</p>
           </div>
-          <div className="space-x-3">
+          <div className="flex gap-3">
             <Link
               href="/"
-              className="text-gray-700 border border-gray-300 px-4 py-2 rounded-md hover:bg-gray-100"
+              className="flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold border border-blue-200 hover:bg-blue-50 hover:shadow-lg transition-all duration-300 transform hover:scale-105"
             >
-              View Site
+              <span>🏠</span>
+              Back to Home
             </Link>
           </div>
         </div>
@@ -103,8 +113,17 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <StatCard title="Doctors" value={stats.doctors} color="blue" />
           <StatCard title="Users" value={stats.users} color="green" />
-          <StatCard title="Appointments" value={stats.appointments} color="purple" />
+          <StatCard title="Total Appointments" value={stats.appointments} color="purple" />
           <StatCard title="Completed" value={stats.completed} color="emerald" />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+          <StatCard title="Upcoming (Booked)" value={stats.booked} color="blue" />
+          <StatCard 
+            title="Completion Rate" 
+            value={stats.appointments > 0 ? Math.round((stats.completed / stats.appointments) * 100) + "%" : "0%"} 
+            color="emerald" 
+          />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

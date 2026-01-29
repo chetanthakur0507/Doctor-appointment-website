@@ -33,6 +33,12 @@ export async function GET(req) {
       });
     }
 
+    if (decoded.role !== "user") {
+      return new Response(JSON.stringify({ message: "User access required" }), {
+        status: 403,
+      });
+    }
+
     const appointments = await Appointment.find({ userId: decoded.userId })
       .populate("doctorId")
       .populate("userId");
@@ -64,6 +70,12 @@ export async function POST(req) {
     if (!decoded) {
       return new Response(JSON.stringify({ message: "Invalid token" }), {
         status: 401,
+      });
+    }
+
+    if (decoded.role !== "user") {
+      return new Response(JSON.stringify({ message: "User access required" }), {
+        status: 403,
       });
     }
 

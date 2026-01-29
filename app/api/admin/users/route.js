@@ -32,7 +32,7 @@ export async function GET(req) {
       });
     }
 
-    const users = await User.find({ role: "user" });
+    const users = await User.find();
 
     return new Response(JSON.stringify(users), { status: 200 });
   } catch (error) {

@@ -32,10 +32,16 @@ export async function PUT(req, { params }) {
       });
     }
 
+    if (decoded.role !== "user") {
+      return new Response(JSON.stringify({ message: "User access required" }), {
+        status: 403,
+      });
+    }
+
     const { status } = await req.json();
 
-    const appointment = await Appointment.findByIdAndUpdate(
-      params.id,
+    const appointment = await Appointment.findOneAndUpdate(
+      { _id: params.id, userId: decoded.userId },
       { status },
       { new: true }
     ).populate("doctorId");
@@ -76,7 +82,13 @@ export async function DELETE(req, { params }) {
       });
     }
 
-    const appointment = await Appointment.findByIdAndDelete(params.id);
+    if (decoded.role !== "user") {
+      return new Response(JSON.stringify({ message: "User access required" }), {
+        status: 403,
+      });
+    }
+
+    const appointment = await Appointment.findOneAndDelete({ _id: params.id, userId: decoded.userId });
 
     if (!appointment) {
       return new Response(

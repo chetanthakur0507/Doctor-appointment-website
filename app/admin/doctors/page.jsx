@@ -130,8 +130,12 @@ export default function AdminDoctors() {
             <h1 className="text-3xl font-bold text-gray-900">Manage Doctors</h1>
             <p className="text-gray-600">Add, view, and remove doctors</p>
           </div>
-          <Link href="/admin/dashboard" className="text-blue-600 hover:underline">
-            ← Back to Dashboard
+          <Link
+            href="/admin/dashboard"
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+          >
+            <span>←</span>
+            Back to Dashboard
           </Link>
         </div>
 

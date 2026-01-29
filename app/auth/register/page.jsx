@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -14,6 +14,23 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const userStr = localStorage.getItem("user");
+    if (!token || !userStr) return;
+
+    try {
+      const user = JSON.parse(userStr);
+      if (user?.role === "admin") {
+        router.push("/admin/dashboard");
+      } else {
+        router.push("/user/dashboard");
+      }
+    } catch (err) {
+      console.error("Invalid user data", err);
+    }
+  }, [router]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
