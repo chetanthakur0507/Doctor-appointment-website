@@ -123,13 +123,13 @@ export default function SectionTabs({ doctor }) {
             <h3 className="font-semibold mb-3">Patient Reviews</h3>
             <div className="space-y-4 text-sm">
               <p>
-                ⭐⭐⭐⭐⭐ <b>John D.</b> – "Highly recommend!"
+                ⭐⭐⭐⭐⭐ <b>John D.</b> – &ldquo;Highly recommend!&rdquo;
               </p>
               <p>
-                ⭐⭐⭐⭐⭐ <b>Sarah M.</b> – "Professional and caring staff."
+                ⭐⭐⭐⭐⭐ <b>Sarah M.</b> – &ldquo;Professional and caring staff.&rdquo;
               </p>
               <p>
-                ⭐⭐⭐⭐ <b>Michael R.</b> – "Great experience overall."
+                ⭐⭐⭐⭐ <b>Michael R.</b> – &ldquo;Great experience overall.&rdquo;
               </p>
             </div>
           </div>
