@@ -3,6 +3,8 @@ import User from "@/models/User";
 import { verifyToken } from "@/lib/auth";
 import { cookies } from "next/headers";
 
+export const dynamic = "force-dynamic";
+
 function getToken(req) {
   const cookieStore = cookies();
   const cookieToken = cookieStore.get("token")?.value;
