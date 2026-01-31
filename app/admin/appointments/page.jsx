@@ -89,71 +89,85 @@ export default function AdminAppointments() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">All Appointments</h1>
-            <p className="text-gray-600">View every appointment across users</p>
-          </div>
-          <Link
-            href="/admin/dashboard"
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 hover:shadow-lg transition-all duration-300 transform hover:scale-105"
-          >
-            <span>←</span>
-            Back to Dashboard
-          </Link>
+    <div className="bg-gradient-to-b from-indigo-50 to-white min-h-screen">
+      {/* Header Section */}
+      <div className="bg-gradient-to-r from-indigo-600 to-indigo-700 text-white py-16 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 right-10 w-40 h-40 bg-white rounded-full blur-3xl"></div>
+          <div className="absolute bottom-10 left-10 w-40 h-40 bg-white rounded-full blur-3xl"></div>
         </div>
 
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-4">
-            {error}
+        <div className="relative z-10 px-4 sm:px-10 lg:px-20">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="animate-fade-in-up flex-1">
+              <h1 className="text-4xl sm:text-5xl font-bold mb-2">
+                All Appointments 📋
+              </h1>
+              <p className="text-lg text-indigo-100">Manage and track all appointments across users</p>
+            </div>
+            <Link
+              href="/admin/dashboard"
+              className="flex items-center justify-center gap-2 px-6 py-3 bg-white text-indigo-600 rounded-lg font-semibold hover:bg-indigo-50 hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+            >
+              <span>←</span>
+              Back to Dashboard
+            </Link>
           </div>
-        )}
+        </div>
+      </div>
 
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Appointments</h2>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">User</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Doctor</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Date</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Time</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Session</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Status</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {appointments.map((apt) => (
-                  <tr key={apt._id} className="border-b border-gray-200 hover:bg-gray-50">
-                    <td className="px-6 py-4">{apt.userId?.name || "User"}</td>
-                    <td className="px-6 py-4">{apt.doctorId?.name || "Doctor"}</td>
-                    <td className="px-6 py-4">{new Date(apt.date).toLocaleDateString()}</td>
-                    <td className="px-6 py-4">{apt.time}</td>
-                    <td className="px-6 py-4">#{apt.sessionNumber}</td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                          apt.status === "completed"
-                            ? "bg-green-100 text-green-700"
-                            : apt.status === "cancelled"
-                            ? "bg-red-100 text-red-700"
-                            : "bg-blue-100 text-blue-700"
-                        }`}
-                      >
-                        {apt.status.charAt(0).toUpperCase() + apt.status.slice(1)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      {apt.status !== "completed" && apt.status !== "cancelled" && (
-                        <button
-                          onClick={() => markComplete(apt._id)}
-                          disabled={completingId === apt._id}
+      {/* Main Content */}
+      <div className="px-4 sm:px-10 lg:px-20 py-12">
+        <div className="max-w-7xl mx-auto">
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+              {error}
+            </div>
+          )}
+
+          <div className="bg-white rounded-2xl shadow-lg border border-indigo-100 overflow-hidden">
+            <div className="px-6 py-4 border-b border-indigo-100 bg-gradient-to-r from-indigo-50 to-white">
+              <h2 className="text-2xl font-bold text-gray-900">Appointments</h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-indigo-50 border-b border-indigo-100">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">User</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Doctor</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Date</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Time</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Session</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Status</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {appointments.map((apt) => (
+                    <tr key={apt._id} className="border-b border-indigo-100 hover:bg-indigo-50 transition">
+                      <td className="px-6 py-4">{apt.userId?.name || "User"}</td>
+                      <td className="px-6 py-4">{apt.doctorId?.name || "Doctor"}</td>
+                      <td className="px-6 py-4">{new Date(apt.date).toLocaleDateString()}</td>
+                      <td className="px-6 py-4">{apt.time}</td>
+                      <td className="px-6 py-4">#{apt.sessionNumber}</td>
+                      <td className="px-6 py-4">
+                        <span
+                          className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                            apt.status === "completed"
+                              ? "bg-green-100 text-green-700"
+                              : apt.status === "cancelled"
+                              ? "bg-red-100 text-red-700"
+                              : "bg-blue-100 text-blue-700"
+                          }`}
+                        >
+                          {apt.status.charAt(0).toUpperCase() + apt.status.slice(1)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        {apt.status !== "completed" && apt.status !== "cancelled" && (
+                          <button
+                            onClick={() => markComplete(apt._id)}
+                            disabled={completingId === apt._id}
                           className="bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white px-4 py-2 rounded-md transition font-semibold text-sm"
                         >
                           {completingId === apt._id ? "Marking..." : "✓ Mark Complete"}
@@ -170,6 +184,7 @@ export default function AdminAppointments() {
               </tbody>
             </table>
           </div>
+        </div>
         </div>
       </div>
     </div>

@@ -86,43 +86,56 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-            <p className="text-gray-600">Overview of the platform</p>
-          </div>
-          <div className="flex gap-3">
+    <div className="bg-gradient-to-b from-indigo-50 to-white min-h-screen">
+      {/* Header Section */}
+      <div className="bg-gradient-to-r from-indigo-600 to-indigo-700 text-white py-16 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 right-10 w-40 h-40 bg-white rounded-full blur-3xl"></div>
+          <div className="absolute bottom-10 left-10 w-40 h-40 bg-white rounded-full blur-3xl"></div>
+        </div>
+
+        <div className="relative z-10 px-4 sm:px-10 lg:px-20">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="animate-fade-in-up flex-1">
+              <h1 className="text-4xl sm:text-5xl font-bold mb-2">
+                Welcome to Admin 🎛️
+              </h1>
+              <p className="text-lg text-indigo-100">Manage doctors, users, and appointments across the platform</p>
+            </div>
             <Link
               href="/"
-              className="flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold border border-blue-200 hover:bg-blue-50 hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+              className="flex items-center justify-center gap-2 px-6 py-3 bg-white text-indigo-600 rounded-lg font-semibold hover:bg-indigo-50 hover:shadow-lg transition-all duration-300 transform hover:scale-105"
             >
               <span>🏠</span>
               Back to Home
             </Link>
           </div>
         </div>
+      </div>
 
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-6">
-            {error}
-          </div>
-        )}
+      {/* Main Content */}
+      <div className="px-4 sm:px-10 lg:px-20 py-12">
+        <div className="max-w-7xl mx-auto">
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+              {error}
+            </div>
+          )}
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <StatCard title="Doctors" value={stats.doctors} color="blue" />
-          <StatCard title="Users" value={stats.users} color="green" />
-          <StatCard title="Total Appointments" value={stats.appointments} color="purple" />
-          <StatCard title="Completed" value={stats.completed} color="emerald" />
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12 animate-fade-in-up">
+          <StatCard title="Doctors" value={stats.doctors} color="blue" icon="👨‍⚕️" />
+          <StatCard title="Users" value={stats.users} color="green" icon="👥" />
+          <StatCard title="Total Appointments" value={stats.appointments} color="purple" icon="📋" />
+          <StatCard title="Completed" value={stats.completed} color="emerald" icon="✅" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-          <StatCard title="Upcoming (Booked)" value={stats.booked} color="blue" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 animate-fade-in-up animation-delay-100">
+          <StatCard title="Upcoming (Booked)" value={stats.booked} color="blue" icon="📅" />
           <StatCard 
             title="Completion Rate" 
             value={stats.appointments > 0 ? Math.round((stats.completed / stats.appointments) * 100) + "%" : "0%"} 
             color="emerald" 
+            icon="📊"
           />
         </div>
 
@@ -167,22 +180,31 @@ export default function AdminDashboard() {
             )}
           </div>
         </div>
+        </div>
       </div>
     </div>
   );
 }
 
-function StatCard({ title, value, color }) {
+function StatCard({ title, value, color, icon }) {
   const colorMap = {
-    blue: "bg-blue-50 text-blue-700",
-    green: "bg-green-50 text-green-700",
-    purple: "bg-purple-50 text-purple-700",
-    emerald: "bg-emerald-50 text-emerald-700",
+    blue: { gradient: "from-blue-500 to-cyan-500", text: "text-blue-600" },
+    green: { gradient: "from-green-500 to-emerald-500", text: "text-green-600" },
+    purple: { gradient: "from-purple-500 to-indigo-500", text: "text-purple-600" },
+    emerald: { gradient: "from-emerald-500 to-teal-500", text: "text-emerald-600" },
   };
+  
+  const { gradient, text } = colorMap[color] || colorMap.blue;
+  
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <p className="text-sm text-gray-600 font-semibold">{title}</p>
-      <p className={`text-3xl font-bold mt-2 ${colorMap[color]}`}>{value}</p>
+    <div className="bg-white rounded-xl shadow-md hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden animate-fade-in-up">
+      <div className={`bg-gradient-to-r ${gradient} h-24 flex items-center justify-center text-5xl`}>
+        {icon}
+      </div>
+      <div className="p-6">
+        <p className="text-gray-600 text-sm font-semibold mb-2">{title}</p>
+        <p className={`text-4xl font-bold ${text}`}>{value}</p>
+      </div>
     </div>
   );
 }

@@ -144,24 +144,24 @@ export default function UserDashboard() {
         </div>
 
         <div className="relative z-10 px-4 sm:px-10 lg:px-20">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="animate-fade-in-up flex-1">
               <h1 className="text-4xl sm:text-5xl font-bold mb-2">
                 Welcome, {user?.name}! 👋
               </h1>
               <p className="text-lg text-blue-100">Manage your medical appointments and health records</p>
             </div>
-            <div className="hidden sm:flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
               <Link
                 href="/user/profile"
-                className="flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-400 hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-400 hover:shadow-lg transition-all duration-300 transform hover:scale-105"
               >
                 <span>🧾</span>
                 Edit Profile
               </Link>
               <Link
                 href="/"
-                className="flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 hover:shadow-lg transition-all duration-300 transform hover:scale-105"
               >
                 <span>🏠</span>
                 Back to Home

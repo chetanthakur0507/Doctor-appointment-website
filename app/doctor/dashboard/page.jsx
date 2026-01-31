@@ -113,88 +113,108 @@ export default function DoctorDashboard() {
   const completedCount = appointments.filter((a) => a.status === "completed").length;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto px-4 py-10">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Doctor Dashboard</h1>
-            <p className="text-gray-600 text-sm md:text-base">
-              Welcome{user?.name ? `, Dr. ${user.name}` : ""}
-            </p>
-            {doctor && (
-              <p className="text-sm text-gray-500 mt-1">
-                {doctor.department} • {doctor.specialization}
-              </p>
-            )}
-          </div>
-          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-            <button
-              onClick={refreshData}
-              disabled={refreshing}
-              className="flex items-center justify-center gap-2 px-4 py-2 md:px-6 md:py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-sm md:text-base whitespace-nowrap disabled:opacity-50"
-            >
-              <span className={refreshing ? "animate-spin" : ""}>🔄</span>
-              {refreshing ? "Refreshing..." : "Refresh"}
-            </button>
-            <Link
-              href="/doctor/profile"
-              className="flex items-center justify-center gap-2 px-4 py-2 md:px-6 md:py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-sm md:text-base whitespace-nowrap"
-            >
-              <span>✏️</span>
-              Edit Profile
-            </Link>
-            <Link
-              href="/"
-              className="flex items-center justify-center gap-2 px-4 py-2 md:px-6 md:py-3 bg-white text-blue-600 rounded-lg font-semibold border border-blue-200 hover:bg-blue-50 hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-sm md:text-base whitespace-nowrap"
-            >
-              <span>🏠</span>
-              Back to Home
-            </Link>
-          </div>
+    <div className="bg-gradient-to-b from-blue-50 to-white min-h-screen">
+      {/* Header Section */}
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-16 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 right-10 w-40 h-40 bg-white rounded-full blur-3xl"></div>
+          <div className="absolute bottom-10 left-10 w-40 h-40 bg-white rounded-full blur-3xl"></div>
         </div>
 
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-6">
-            {error}
+        <div className="relative z-10 px-4 sm:px-10 lg:px-20">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="animate-fade-in-up flex-1">
+              <h1 className="text-4xl sm:text-5xl font-bold mb-2">
+                Welcome, Dr. {user?.name}! 👨‍⚕️
+              </h1>
+              <p className="text-lg text-blue-100">Manage your appointments and patient consultations</p>
+              {doctor && (
+                <p className="text-blue-200 mt-2 font-semibold">
+                  {doctor.department} • {doctor.specialization}
+                </p>
+              )}
+            </div>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+              <button
+                onClick={refreshData}
+                disabled={refreshing}
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-400 hover:shadow-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50"
+              >
+                <span className={refreshing ? "animate-spin" : ""}>🔄</span>
+                {refreshing ? "Refreshing..." : "Refresh"}
+              </button>
+              <Link
+                href="/doctor/profile"
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-400 hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+              >
+                <span>✏️</span>
+                Edit Profile
+              </Link>
+              <Link
+                href="/"
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+              >
+                <span>🏠</span>
+                Back to Home
+              </Link>
+            </div>
           </div>
-        )}
+        </div>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <StatCard title="Today" value={todayCount} color="blue" />
-          <StatCard title="Upcoming" value={upcomingCount} color="green" />
-          <StatCard title="Completed" value={completedCount} color="purple" />
+      {/* Main Content */}
+      <div className="px-4 sm:px-10 lg:px-20 py-12">
+        <div className="max-w-6xl mx-auto">
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+              {error}
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 animate-fade-in-up">
+          <StatCard title="Today" value={todayCount} color="blue" icon="📋" />
+          <StatCard title="Upcoming" value={upcomingCount} color="green" icon="✅" />
+          <StatCard title="Completed" value={completedCount} color="purple" icon="🎉" />
         </div>
 
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Appointments</h2>
+        <div className="bg-white rounded-2xl shadow-lg border border-blue-100 overflow-hidden">
+          <div className="px-6 py-4 border-b border-blue-100 bg-gradient-to-r from-blue-50 to-white">
+            <h2 className="text-2xl font-bold text-gray-900">Your Appointments</h2>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-blue-50 border-b border-blue-100">
                 <tr>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Patient</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Date</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Time</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Status</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Actions</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Patient</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Date</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Time</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Status</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {appointments.length === 0 ? (
                   <tr>
-                    <td className="px-6 py-6 text-gray-600" colSpan={5}>
-                      No appointments found.
+                    <td className="px-6 py-12 text-center text-gray-600" colSpan={5}>
+                      <p className="text-6xl mb-4">📭</p>
+                      <p className="text-lg">No appointments found.</p>
                     </td>
                   </tr>
                 ) : (
                   appointments.map((apt) => (
-                    <tr key={apt._id} className="border-b border-gray-200">
-                      <td className="px-6 py-4">{apt.userId?.name || "Patient"}</td>
-                      <td className="px-6 py-4">{new Date(apt.date).toLocaleDateString()}</td>
-                      <td className="px-6 py-4">{apt.time}</td>
+                    <tr key={apt._id} className="border-b border-blue-100 hover:bg-blue-50 transition">
                       <td className="px-6 py-4">
-                        <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                        <div className="font-semibold text-gray-800">{apt.userId?.name || "Patient"}</div>
+                        {apt.notes?.trim() && (
+                          <div className="text-xs text-gray-500 mt-1 max-w-[240px] truncate">
+                            📝 {apt.notes}
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 text-gray-700">{new Date(apt.date).toLocaleDateString()}</td>
+                      <td className="px-6 py-4 text-gray-700">{apt.time}</td>
+                      <td className="px-6 py-4">
+                        <span className={`px-3 py-1 rounded-full text-sm font-semibold inline-block ${
                           apt.status === "completed"
                             ? "bg-green-100 text-green-700"
                             : apt.status === "cancelled"
@@ -238,21 +258,30 @@ export default function DoctorDashboard() {
             </table>
           </div>
         </div>
+        </div>
       </div>
     </div>
   );
 }
 
-function StatCard({ title, value, color }) {
+function StatCard({ title, value, color, icon }) {
   const colorMap = {
-    blue: "bg-blue-50 text-blue-700",
-    green: "bg-green-50 text-green-700",
-    purple: "bg-purple-50 text-purple-700",
+    blue: { gradient: "from-blue-500 to-cyan-500", text: "text-blue-600" },
+    green: { gradient: "from-green-500 to-emerald-500", text: "text-green-600" },
+    purple: { gradient: "from-purple-500 to-indigo-500", text: "text-purple-600" },
   };
+  
+  const { gradient, text } = colorMap[color] || colorMap.blue;
+  
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <p className="text-sm text-gray-600 font-semibold">{title}</p>
-      <p className={`text-3xl font-bold mt-2 ${colorMap[color]}`}>{value}</p>
+    <div className="bg-white rounded-xl shadow-md hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden animate-fade-in-up">
+      <div className={`bg-gradient-to-r ${gradient} h-24 flex items-center justify-center text-5xl`}>
+        {icon}
+      </div>
+      <div className="p-6">
+        <p className="text-gray-600 text-sm font-semibold mb-2">{title}</p>
+        <p className={`text-4xl font-bold ${text}`}>{value}</p>
+      </div>
     </div>
   );
 }
