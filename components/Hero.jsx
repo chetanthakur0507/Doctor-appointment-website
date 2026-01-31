@@ -65,7 +65,7 @@ export default function Hero() {
       <div className="relative animate-slide-in-right">
         <div className="relative w-full h-[400px] md:h-[500px] rounded-2xl shadow-2xl overflow-hidden">
           <Image
-            src="https://images.unsplash.com/photo-1666214280557-f1b5022eb634?w=800"
+            src="https://i.pinimg.com/736x/b1/d4/aa/b1d4aa0eed3194fa2003e6c681b507c5.jpg"
             alt="Doctor consultation"
             fill
             className="object-cover hover:scale-105 transition-transform duration-500"

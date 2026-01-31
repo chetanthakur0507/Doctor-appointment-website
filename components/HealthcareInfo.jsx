@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function HealthcareInfo() {
   return (
     <section className="px-8 lg:px-24 py-20 bg-gradient-to-br from-indigo-900 via-purple-800 to-pink-700 rounded-3xl text-white shadow-2xl relative overflow-hidden">
@@ -33,9 +35,14 @@ export default function HealthcareInfo() {
             <li className="flex items-start gap-2"><span className="text-pink-400">✓</span> Women&apos;s Health Issues</li>
           </ul>
 
-          <button className="mt-8 bg-gradient-to-r from-green-400 to-emerald-500 text-white px-8 py-4 rounded-full font-bold hover:scale-110 transition-transform duration-300 shadow-lg hover:shadow-2xl w-full text-base">
-            📱 WhatsApp Now
-          </button>
+          <Link
+            href="/contact"
+            className="mt-8 inline-block w-full"
+          >
+            <button className="bg-gradient-to-r from-green-400 to-emerald-500 text-white px-8 py-4 rounded-full font-bold hover:scale-110 transition-transform duration-300 shadow-lg hover:shadow-2xl w-full text-base">
+              📱 WhatsApp Now
+            </button>
+          </Link>
         </div>
 
         {/* Why Choose Us */}

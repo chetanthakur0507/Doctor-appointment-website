@@ -20,15 +20,40 @@ const Navbar = () => {
 
   useEffect(() => {
     // Check if user is logged in
-    const userStr = localStorage.getItem("user");
-    if (userStr) {
-      try {
-        setUser(JSON.parse(userStr));
-      } catch (error) {
-        console.error("Error parsing user:", error);
+    const checkUser = () => {
+      const userStr = localStorage.getItem("user");
+      if (userStr) {
+        try {
+          setUser(JSON.parse(userStr));
+        } catch (error) {
+          console.error("Error parsing user:", error);
+          setUser(null);
+        }
+      } else {
+        setUser(null);
       }
-    }
-    setIsLoading(false);
+      setIsLoading(false);
+    };
+
+    checkUser();
+
+    // Listen for storage changes (when user logs in/out in another tab or component)
+    const handleStorageChange = () => {
+      checkUser();
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    
+    // Also listen for custom event when login happens on same page
+    const handleLoginEvent = () => {
+      checkUser();
+    };
+    window.addEventListener("userUpdated", handleLoginEvent);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("userUpdated", handleLoginEvent);
+    };
   }, []);
 
   const handleLogout = () => {
@@ -36,6 +61,7 @@ const Navbar = () => {
     localStorage.removeItem("user");
     setUser(null);
     setMobileOpen(false);
+    window.dispatchEvent(new Event("userUpdated"));
     router.push("/");
   };
 

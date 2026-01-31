@@ -74,6 +74,9 @@ export default function RegisterPage() {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
+      // Dispatch custom event so Navbar updates immediately
+      window.dispatchEvent(new Event("userUpdated"));
+
       // Redirect to user dashboard
       router.push("/user/dashboard");
     } catch (error) {

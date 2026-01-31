@@ -10,6 +10,7 @@ export default function DoctorDashboard() {
   const [doctor, setDoctor] = useState(null);
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
   const [completingId, setCompletingId] = useState(null);
 
@@ -88,6 +89,16 @@ export default function DoctorDashboard() {
     }
   };
 
+  const refreshData = async () => {
+    setRefreshing(true);
+    try {
+      const token = localStorage.getItem("token");
+      await fetchDoctorData(token);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -104,10 +115,10 @@ export default function DoctorDashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto px-4 py-10">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Doctor Dashboard</h1>
-            <p className="text-gray-600">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Doctor Dashboard</h1>
+            <p className="text-gray-600 text-sm md:text-base">
               Welcome{user?.name ? `, Dr. ${user.name}` : ""}
             </p>
             {doctor && (
@@ -116,17 +127,25 @@ export default function DoctorDashboard() {
               </p>
             )}
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <button
+              onClick={refreshData}
+              disabled={refreshing}
+              className="flex items-center justify-center gap-2 px-4 py-2 md:px-6 md:py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-sm md:text-base whitespace-nowrap disabled:opacity-50"
+            >
+              <span className={refreshing ? "animate-spin" : ""}>🔄</span>
+              {refreshing ? "Refreshing..." : "Refresh"}
+            </button>
             <Link
               href="/doctor/profile"
-              className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+              className="flex items-center justify-center gap-2 px-4 py-2 md:px-6 md:py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-sm md:text-base whitespace-nowrap"
             >
               <span>✏️</span>
               Edit Profile
             </Link>
             <Link
               href="/"
-              className="flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold border border-blue-200 hover:bg-blue-50 hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+              className="flex items-center justify-center gap-2 px-4 py-2 md:px-6 md:py-3 bg-white text-blue-600 rounded-lg font-semibold border border-blue-200 hover:bg-blue-50 hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-sm md:text-base whitespace-nowrap"
             >
               <span>🏠</span>
               Back to Home

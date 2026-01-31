@@ -172,33 +172,54 @@ export default function UserDashboard() {
       </div>
 
       {/* Profile Summary */}
-      <div className="px-4 sm:px-10 lg:px-20 -mt-8">
-        <div className="bg-white rounded-2xl shadow-lg border border-blue-100 p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900">Patient Profile</h2>
-            <p className="text-gray-600 text-sm mt-1">
-              {profile ? "Your medical profile is shared with your doctor for better care." : "Complete your profile to help doctors treat you better."}
-            </p>
-            {profileError && (
-              <p className="text-sm text-red-600 mt-2">{profileError}</p>
-            )}
-            {profile && (
-              <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm text-gray-700">
-                <div><span className="text-gray-500">DOB:</span> {profile.dateOfBirth ? new Date(profile.dateOfBirth).toLocaleDateString() : "—"}</div>
-                <div><span className="text-gray-500">Gender:</span> {profile.gender || "—"}</div>
-                <div><span className="text-gray-500">Blood Group:</span> {profile.bloodGroup || "—"}</div>
-                <div><span className="text-gray-500">Allergies:</span> {profile.allergies?.length ? profile.allergies.join(", ") : "—"}</div>
-                <div><span className="text-gray-500">Medical History:</span> {profile.medicalHistory?.length ? profile.medicalHistory.join(", ") : "—"}</div>
-                <div><span className="text-gray-500">Medications:</span> {profile.currentMedications?.length ? profile.currentMedications.join(", ") : "—"}</div>
-              </div>
-            )}
+      <div className="px-4 sm:px-10 lg:px-20 mt-8">
+        <div className="bg-white rounded-2xl shadow-lg border border-blue-100 p-6">
+          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+            <div className="flex-1">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">👤 Patient Profile</h2>
+              <p className="text-gray-600 text-sm">
+                {profile ? "✓ Your medical profile is complete and shared with your doctor for better care." : "⚠️ Complete your profile to help doctors treat you better."}
+              </p>
+              {profileError && (
+                <p className="text-sm text-red-600 mt-2 bg-red-50 p-2 rounded">🚨 {profileError}</p>
+              )}
+              {profile && (
+                <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-4">
+                  <div className="bg-blue-50 p-3 rounded-lg">
+                    <p className="text-xs text-gray-600 font-semibold">Date of Birth</p>
+                    <p className="text-sm font-bold text-gray-900 mt-1">{profile.dateOfBirth ? new Date(profile.dateOfBirth).toLocaleDateString() : "—"}</p>
+                  </div>
+                  <div className="bg-green-50 p-3 rounded-lg">
+                    <p className="text-xs text-gray-600 font-semibold">Gender</p>
+                    <p className="text-sm font-bold text-gray-900 mt-1">{profile.gender || "—"}</p>
+                  </div>
+                  <div className="bg-purple-50 p-3 rounded-lg">
+                    <p className="text-xs text-gray-600 font-semibold">Blood Group</p>
+                    <p className="text-sm font-bold text-gray-900 mt-1">{profile.bloodGroup || "—"}</p>
+                  </div>
+                  {profile.allergies?.length > 0 && (
+                    <div className="bg-orange-50 p-3 rounded-lg col-span-2 sm:col-span-1">
+                      <p className="text-xs text-gray-600 font-semibold">Allergies</p>
+                      <p className="text-xs font-bold text-gray-900 mt-1">{profile.allergies.join(", ")}</p>
+                    </div>
+                  )}
+                  {profile.medicalHistory?.length > 0 && (
+                    <div className="bg-yellow-50 p-3 rounded-lg col-span-2 sm:col-span-1">
+                      <p className="text-xs text-gray-600 font-semibold">Medical History</p>
+                      <p className="text-xs font-bold text-gray-900 mt-1">{profile.medicalHistory.join(", ")}</p>
+                    </div>
+                  )}
+                  {profile.currentMedications?.length > 0 && (
+                    <div className="bg-red-50 p-3 rounded-lg col-span-2 sm:col-span-1">
+                      <p className="text-xs text-gray-600 font-semibold">Current Medications</p>
+                      <p className="text-xs font-bold text-gray-900 mt-1">{profile.currentMedications.join(", ")}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+           
           </div>
-          <Link
-            href="/user/profile"
-            className="inline-flex items-center gap-2 px-5 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 hover:shadow-lg transition-all duration-300"
-          >
-            {profile ? "Update Profile" : "Create Profile"}
-          </Link>
         </div>
       </div>
 

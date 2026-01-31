@@ -27,7 +27,13 @@ export default function DoctorProfileCard({ doctor }) {
           </h2>
           <p className="text-gray-600">{doctor.specialization}</p>
           <p className="text-sm text-gray-500 mt-1">
-            🏥 {doctor.department} Department · 📧 {doctor.email}
+            🏥 {doctor.department} Department
+          </p>
+          <p className="text-sm text-gray-500 mt-1">
+            📧 {doctor.email}
+          </p>
+          <p className="text-sm text-gray-500 mt-1">
+            📱 {doctor.phone || "N/A"}
           </p>
 
           <div className="flex gap-3 mt-4">

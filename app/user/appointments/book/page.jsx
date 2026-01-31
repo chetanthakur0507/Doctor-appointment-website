@@ -227,7 +227,8 @@ export default function BookAppointment() {
       setShowPayment(false);
       setTimeout(() => {
         router.push("/user/dashboard");
-      }, 2000);
+        router.refresh();
+      }, 1000);
     } catch (error) {
       setError("Appointment booking failed after payment. Please contact support.");
       console.error("Error booking appointment:", error);

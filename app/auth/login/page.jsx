@@ -63,6 +63,9 @@ export default function LoginPage() {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
+      // Dispatch custom event so Navbar updates immediately
+      window.dispatchEvent(new Event("userUpdated"));
+
       // Redirect based on role
       if (data.user?.role === "admin") {
         router.push("/admin/dashboard");
