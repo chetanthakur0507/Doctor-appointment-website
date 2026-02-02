@@ -338,6 +338,16 @@ export default function UserDashboard() {
                                 {appointment.status === "booked" ? "✓ Upcoming" : appointment.status === "completed" ? "✓ Completed" : "✗ Cancelled"}
                               </span>
                             </div>
+                            {appointment.prescription?.url && (
+                              <a
+                                href={appointment.prescription.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-block text-indigo-600 hover:text-indigo-800 font-semibold text-sm hover:bg-indigo-50 px-4 py-2 rounded-lg transition mb-2"
+                              >
+                                Download Prescription
+                              </a>
+                            )}
                             {appointment.status === "booked" && (
                               <button
                                 onClick={() => cancelAppointment(appointment._id)}

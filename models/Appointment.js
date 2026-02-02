@@ -45,6 +45,12 @@ const appointmentSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    prescription: {
+      url: { type: String, default: null },
+      name: { type: String, default: null },
+      uploadedAt: { type: Date, default: null },
+      uploadedBy: { type: String, enum: ["doctor"], default: null },
+    },
     createdAt: {
       type: Date,
       default: Date.now,

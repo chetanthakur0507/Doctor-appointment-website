@@ -13,6 +13,8 @@ export default function DoctorDashboard() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
   const [completingId, setCompletingId] = useState(null);
+  const [uploadingId, setUploadingId] = useState(null);
+  const [prescriptionFiles, setPrescriptionFiles] = useState({});
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -96,6 +98,52 @@ export default function DoctorDashboard() {
       await fetchDoctorData(token);
     } finally {
       setRefreshing(false);
+    }
+  };
+
+  const handleFileChange = (appointmentId, file) => {
+    setPrescriptionFiles((prev) => ({
+      ...prev,
+      [appointmentId]: file || null,
+    }));
+  };
+
+  const uploadPrescription = async (appointmentId) => {
+    const file = prescriptionFiles[appointmentId];
+    if (!file) {
+      setError("Please select a prescription file first.");
+      return;
+    }
+
+    setUploadingId(appointmentId);
+    try {
+      const token = localStorage.getItem("token");
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch(`/api/doctor/appointments/${appointmentId}/prescription`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.message || "Failed to upload prescription");
+        return;
+      }
+
+      setAppointments((prev) =>
+        prev.map((apt) => (apt._id === appointmentId ? data : apt))
+      );
+      setPrescriptionFiles((prev) => ({ ...prev, [appointmentId]: null }));
+    } catch (err) {
+      console.error("Prescription upload error", err);
+      setError("Failed to upload prescription");
+    } finally {
+      setUploadingId(null);
     }
   };
 
@@ -235,7 +283,36 @@ export default function DoctorDashboard() {
                             </Link>
                           ) : (
                             <span className="px-3 py-2 bg-gray-100 text-gray-500 rounded-md text-sm font-semibold">
-                              No Profiles
+                              No Profile
+                            </span>
+                          )}
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="file"
+                              accept="application/pdf,image/*"
+                              onChange={(e) => handleFileChange(apt._id, e.target.files?.[0] || null)}
+                              className="text-xs text-gray-600"
+                            />
+                            <button
+                              onClick={() => uploadPrescription(apt._id)}
+                              disabled={uploadingId === apt._id}
+                              className="bg-indigo-500 hover:bg-indigo-600 disabled:bg-gray-400 text-white px-3 py-2 rounded-md transition font-semibold text-sm"
+                            >
+                              {uploadingId === apt._id ? "Uploading..." : "Upload Rx"}
+                            </button>
+                          </div>
+                          {apt.prescription?.url ? (
+                            <a
+                              href={apt.prescription.url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="px-3 py-2 bg-purple-50 text-purple-700 rounded-md text-sm font-semibold hover:bg-purple-100 transition"
+                            >
+                              Download Rx
+                            </a>
+                          ) : (
+                            <span className="px-3 py-2 bg-gray-50 text-gray-400 rounded-md text-sm font-semibold">
+                              No Rx
                             </span>
                           )}
                           {apt.status !== "completed" && apt.status !== "cancelled" ? (
