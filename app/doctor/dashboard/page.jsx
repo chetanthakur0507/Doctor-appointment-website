@@ -235,7 +235,7 @@ export default function DoctorDashboard() {
                             </Link>
                           ) : (
                             <span className="px-3 py-2 bg-gray-100 text-gray-500 rounded-md text-sm font-semibold">
-                              No Profile
+                              No Profiles
                             </span>
                           )}
                           {apt.status !== "completed" && apt.status !== "cancelled" ? (
