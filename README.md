@@ -1,4 +1,4 @@
-# 🩺 Doctor Appointment Booking Platform
+# 🩺 Doctor Appointment Booking Platform 🩺
 
 A full-stack web application for booking doctor appointments online.
 
