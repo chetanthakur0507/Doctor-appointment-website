@@ -51,7 +51,7 @@ Patients can browse doctors, book appointments and pay online. Doctors manage th
 ## 🔄 How It Works
 
 **Booking flow**
-1. Patient registers / logs in
+1. Patient register / login
 2. Browses doctors or departments → opens a doctor's profile
 3. Selects date & time slot → books appointment
 4. Appointment status: `booked` → `completed` / `cancelled`
